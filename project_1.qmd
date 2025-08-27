@@ -1,0 +1,40 @@
+---
+title: "Project 1 DATA1901"
+format: 
+  html:
+    embed-resources: true
+    code-fold: true
+    title-block-banner: "#000000" 
+
+editor: visual
+---
+
+# Executive Summary
+
+# Explorary Data Analysis (EDA)
+
+## Structures
+
+## Limitations
+
+## Assumptions
+
+# Research Question and Analysis
+
+## Research Question
+
+## Analysis
+
+# Articles
+
+(APA Style)
+
+# Acknowledgments
+
+## Group Meetings
+
+## Contributions
+
+## Resources
+
+## AI Usage Statement
