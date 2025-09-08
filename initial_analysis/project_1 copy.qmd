@@ -1,0 +1,307 @@
+---
+title: "Project 1 DATA1901"
+format: 
+  html:
+    embed-resources: true
+    code-fold: true
+    title-block-banner: "#000000" 
+
+editor: visual
+---
+
+```{r}
+library(readxl)
+library(tidyverse)
+library(rafalib)
+library(plotly)
+library(dplyr)
+
+pooled_data = read_excel("data.xlsx", "pooled123")
+```
+
+# Executive Summary
+
+# Explorary Data Analysis (EDA)
+
+## Structures
+
+## Limitations
+
+## Assumptions
+
+# Research Question and Analysis
+
+## Research Question
+
+**`RQ1 : Which specific side effects increase the most after VR exposure?`**
+
+## Analysis
+
+::: panel-tabset
+:::
+
+```{r}
+BSSQ <- data.frame(
+  label = c("BSSQ_1","BSSQ_2","BSSQ_3","BSSQ_4",
+            "BSSQ_5","BSSQ_6","BSSQ_7","BSSQ_8",
+            "BSSQ_9","BSSQ_10","BSSQ_11","BSSQ_12",
+            "BSSQ_13","BSSQ_14","BSSQ_15","BSSQ_16"),
+  sum   = c(sum(pooled_data$BSSQ_1), sum(pooled_data$BSSQ_2),
+            sum(pooled_data$BSSQ_3), sum(pooled_data$BSSQ_4),
+            sum(pooled_data$BSSQ_5), sum(pooled_data$BSSQ_6),
+            sum(pooled_data$BSSQ_7), sum(pooled_data$BSSQ_8),
+            sum(pooled_data$BSSQ_9), sum(pooled_data$BSSQ_10),
+            sum(pooled_data$BSSQ_11), sum(pooled_data$BSSQ_12),
+            sum(pooled_data$BSSQ_13), sum(pooled_data$BSSQ_14),
+            sum(pooled_data$BSSQ_15), sum(pooled_data$BSSQ_16))
+)
+
+ASSQ <- data.frame(
+  label = c("ASSQ_1","ASSQ_2","ASSQ_3","ASSQ_4",
+            "ASSQ_5","ASSQ_6","ASSQ_7","ASSQ_8",
+            "ASSQ_9","ASSQ_10","ASSQ_11","ASSQ_12",
+            "ASSQ_13","ASSQ_14","ASSQ_15","ASSQ_16"),
+  sum   = c(sum(pooled_data$ASSQ_1), sum(pooled_data$ASSQ_2),
+            sum(pooled_data$ASSQ_3), sum(pooled_data$ASSQ_4),
+            sum(pooled_data$ASSQ_5), sum(pooled_data$ASSQ_6),
+            sum(pooled_data$ASSQ_7), sum(pooled_data$ASSQ_8),
+            sum(pooled_data$ASSQ_9), sum(pooled_data$ASSQ_10),
+            sum(pooled_data$ASSQ_11), sum(pooled_data$ASSQ_12),
+            sum(pooled_data$ASSQ_13), sum(pooled_data$ASSQ_14),
+            sum(pooled_data$ASSQ_15), sum(pooled_data$ASSQ_16))
+)
+
+BSSQ$label <- factor(BSSQ$label, levels = BSSQ$label)
+ASSQ$label <- factor(ASSQ$label, levels = ASSQ$label)
+
+diff <- data.frame(
+  label = c("ASSQ_1 - BSSQ_1","ASSQ_2 - BSSQ_2","ASSQ_3 - BSSQ_3","ASSQ_4 - BSSQ_4","ASSQ_5 - BSSQ_5","ASSQ_6 - BSSQ_6","ASSQ_7 - BSSQ_7","ASSQ_8 - BSSQ_8", "ASSQ_9 - BSSQ_9", "ASSQ_10 - BSSQ_10", "ASSQ_11 - BSSQ_11", "ASSQ_12 - BSSQ_12", "ASSQ_13 - BSSQ_13", "ASSQ_14 - BSSQ_14", "ASSQ_15 - BSSQ_15","ASSQ_16 - BSSQ_16"),
+  diff = ASSQ$sum - BSSQ$sum
+)
+diff$label <- factor(diff$label, levels = diff$label)
+
+
+plot_overall <- ggplot(diff, aes(x = label, y = diff, fill = label,
+                         text = paste(label, diff, sep=": "))) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  theme(
+    axis.text.x  = element_blank(),
+    axis.title.x = element_blank(),
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  labs(y = "ASSQ - BSSQ", title = "Difference between ASSQ and BSSQ")
+
+
+
+
+```
+
+::: panel-tabset
+## Figure 1
+
+```{r}
+ggplotly(plot_overall, tooltip = "text")
+```
+:::
+
+Based on figure 1, the general discomfort has the most significant increase among all side effects for people who don't see the social model. Interestingly, there is a negative difference which means, after VR, it reduces some people fatigue.
+
+```{r}
+happy <- pooled_data %>%
+  group_by(happy) %>%
+  reframe(diff2 = sum(ASSQ_3) - sum(BSSQ_3), people = n(), average = diff2 / people)
+happy
+```
+
+```{r}
+
+pooled_data_male = filter(pooled_data, gender == "Male")
+
+BSSQ_male = c(sum(pooled_data_male$BSSQ_1), sum(pooled_data_male$BSSQ_2), sum(pooled_data_male$BSSQ_3), sum(pooled_data_male$BSSQ_4), sum(pooled_data_male$BSSQ_5), sum(pooled_data_male$BSSQ_6), sum(pooled_data_male$BSSQ_7), sum(pooled_data_male$BSSQ_8), sum(pooled_data_male$BSSQ_9), sum(pooled_data_male$BSSQ_10), sum(pooled_data_male$BSSQ_11), sum(pooled_data_male$BSSQ_12), sum(pooled_data_male$BSSQ_13), sum(pooled_data_male$BSSQ_14), sum(pooled_data_male$BSSQ_15), sum(pooled_data_male$BSSQ_16))
+
+ASSQ_male = c(sum(pooled_data_male$ASSQ_1), sum(pooled_data_male$ASSQ_2), sum(pooled_data_male$ASSQ_3), sum(pooled_data_male$ASSQ_4), sum(pooled_data_male$ASSQ_5), sum(pooled_data_male$ASSQ_6), sum(pooled_data_male$ASSQ_7), sum(pooled_data_male$ASSQ_8), sum(pooled_data_male$ASSQ_9), sum(pooled_data_male$ASSQ_10), sum(pooled_data_male$ASSQ_11), sum(pooled_data_male$ASSQ_12), sum(pooled_data_male$ASSQ_13), sum(pooled_data_male$ASSQ_14), sum(pooled_data_male$ASSQ_15), sum(pooled_data_male$ASSQ_16))
+
+diff_male <- data.frame(
+  label = c("ASSQ_1 - BSSQ_1","ASSQ_2 - BSSQ_2","ASSQ_3 - BSSQ_3","ASSQ_4 - BSSQ_4","ASSQ_5 - BSSQ_5","ASSQ_6 - BSSQ_6","ASSQ_7 - BSSQ_7","ASSQ_8 - BSSQ_8", "ASSQ_9 - BSSQ_9", "ASSQ_10 - BSSQ_10", "ASSQ_11 - BSSQ_11", "ASSQ_12 - BSSQ_12", "ASSQ_13 - BSSQ_13", "ASSQ_14 - BSSQ_14", "ASSQ_15 - BSSQ_15","ASSQ_16 - BSSQ_16"),
+  diff = ASSQ_male - BSSQ_male
+)
+
+diff_male$label <- factor(diff_male$label, levels = diff_male$label)
+
+plot_male <- ggplot(diff_male, aes(x = label, y = diff, fill = label,
+                         text = paste(label, diff, sep=": "))) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  theme(
+    axis.text.x  = element_blank(),
+    axis.title.x = element_blank(),
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  labs(y = "ASSQ - BSSQ", title = "Difference between ASSQ and BSSQ in Male")
+
+ggplotly(plot_male, tooltip = "text")
+```
+
+```{r}
+pooled_data_female = filter(pooled_data, gender == "Female")
+
+BSSQ_female = c(sum(pooled_data_female$BSSQ_1), sum(pooled_data_female$BSSQ_2), sum(pooled_data_female$BSSQ_3), sum(pooled_data_female$BSSQ_4), sum(pooled_data_female$BSSQ_5), sum(pooled_data_female$BSSQ_6), sum(pooled_data_female$BSSQ_7), sum(pooled_data_female$BSSQ_8), sum(pooled_data_female$BSSQ_9), sum(pooled_data_female$BSSQ_10), sum(pooled_data_female$BSSQ_11), sum(pooled_data_female$BSSQ_12), sum(pooled_data_female$BSSQ_13), sum(pooled_data_female$BSSQ_14), sum(pooled_data_female$BSSQ_15), sum(pooled_data_female$BSSQ_16))
+
+ASSQ_female = c(sum(pooled_data_female$ASSQ_1), sum(pooled_data_female$ASSQ_2), sum(pooled_data_female$ASSQ_3), sum(pooled_data_female$ASSQ_4), sum(pooled_data_female$ASSQ_5), sum(pooled_data_female$ASSQ_6), sum(pooled_data_female$ASSQ_7), sum(pooled_data_female$ASSQ_8), sum(pooled_data_female$ASSQ_9), sum(pooled_data_female$ASSQ_10), sum(pooled_data_female$ASSQ_11), sum(pooled_data_female$ASSQ_12), sum(pooled_data_female$ASSQ_13), sum(pooled_data_female$ASSQ_14), sum(pooled_data_female$ASSQ_15), sum(pooled_data_female$ASSQ_16))
+
+diff_female <- data.frame(
+  label = c("ASSQ_1 - BSSQ_1","ASSQ_2 - BSSQ_2","ASSQ_3 - BSSQ_3","ASSQ_4 - BSSQ_4","ASSQ_5 - BSSQ_5","ASSQ_6 - BSSQ_6","ASSQ_7 - BSSQ_7","ASSQ_8 - BSSQ_8", "ASSQ_9 - BSSQ_9", "ASSQ_10 - BSSQ_10", "ASSQ_11 - BSSQ_11", "ASSQ_12 - BSSQ_12", "ASSQ_13 - BSSQ_13", "ASSQ_14 - BSSQ_14", "ASSQ_15 - BSSQ_15","ASSQ_16 - BSSQ_16"),
+  diff = ASSQ_female - BSSQ_female
+)
+
+diff_female$label <- factor(diff_female$label, levels = diff_female$label)
+
+plot_female <- ggplot(diff_female, aes(x = label, y = diff, fill = label,
+                         text = paste(label, diff, sep=": "))) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  theme(
+    axis.text.x  = element_blank(),
+    axis.title.x = element_blank(),
+    plot.title = element_text(hjust = 0.5)
+  ) +
+  labs(y = "ASSQ - BSSQ", title = "Difference between ASSQ and BSSQ in Female")
+
+ggplotly(plot_female, tooltip = "text")
+```
+
+```{r}
+pooled_data_vr_exp1 <- filter(pooled_data, cont_1 == "NO_SM") %>%
+  group_by(VRexperience) %>%
+  reframe(avg_ssq_full = mean(ssq_full))
+
+
+pooled_data_vr_exp2 <- filter(pooled_data, cont_1 == "SM") %>%
+  group_by(VRexperience) %>%
+  reframe(avg_ssq_full = mean(ssq_full))
+
+pooled_data$cont_1
+
+
+ggplot(pooled_data_vr_exp1) + 
+  geom_bar(stat = "identity", aes(x = VRexperience, y = avg_ssq_full, fill = VRexperience)) +
+  labs(x = "VR Experience", title = "Mean difference in Side Effect Severity", y = "Mean") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+pooled_data_vr_exp2
+
+ggplot(pooled_data_vr_exp2) + 
+  geom_bar(stat = "identity", aes(x = VRexperience, y = avg_ssq_full, fill = VRexperience)) +
+  labs(x = "VR Experience", title = "Mean difference in Side Effect Severity", y = "Mean") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+```{r}
+min(pooled_data$age)
+max(pooled_data$age)
+
+
+pooled_data_age <- mutate(filter(pooled_data, cont_1=="SM"), age_interval = case_when(
+  23 >= age & age >= 18 ~ "18 - 23",
+  29 >= age & age >= 24 ~ "24 - 29",
+  34 >= age & age >= 30 ~ "30 - 34",
+  age >= 35 ~ "35 - 40"
+))
+
+pooled_data_age %>%
+  group_by(age_interval) %>%
+  reframe(mean_diff = mean(ssq_full))
+
+
+```
+
+```{r}
+ggplot(filter(pooled_data, cont_1 == "NO_SM"), aes(x = p_stai, y = ssq_full)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+model = lm(ssq_full ~ p_stai, data = filter(pooled_data, cont_1 == "NO_SM"))
+
+ggplot(model, aes(x = .fitted, y = .resid)) + 
+  geom_point() + # Create scatterplot
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red")
+
+summary(model)
+
+ggplot(filter(pooled_data, cont_1 == "SM"), aes(x = p_stai, y = ssq_full)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+ggplot(pooled_data_age, aes(x = p_stai, y = ssq_full)) +
+  geom_point(aes(color = age_interval)) +
+  geom_smooth(method = "lm", se = FALSE)
+
+model = lm(ssq_full ~ p_stai, data = pooled_data)
+
+ggplot(model, aes(x = .fitted, y = .resid)) + # Plotting fitted values and residuals
+  geom_point() + # Create scatterplot
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red")
+
+summary(model)
+
+```
+
+```{r}
+ggplot(filter(pooled_data), aes(x = p_vra, y = ssq_full)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+
+model1 = lm(ssq_full ~ p_vra, data = filter(pooled_data))
+
+ggplot(model1, aes(x = .fitted, y = .resid)) + # Plotting fitted values and residuals
+  geom_point() + # Create scatterplot
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red")
+
+summary(model1)
+
+```
+
+```{r}
+cor(pooled_data$age, pooled_data$ssq_full)
+ggplot(pooled_data, aes(x = age, y = ssq_full)) + 
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+```{r}
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_4, x = ssq_full, fill = PSTAI_4))
+
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_6, x = ssq_full, fill = PSTAI_6))
+
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_2, x = ssq_full, fill = PSTAI_2))
+
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_1, x = ssq_full, fill = PSTAI_1))
+
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_6, x = p_e, fill = PSTAI_6))
+```
+
+# Articles
+
+(APA Style)
+
+# Acknowledgments
+
+## Group Meetings
+
+## Contributions
+
+## Resources
+
+## AI Usage Statement

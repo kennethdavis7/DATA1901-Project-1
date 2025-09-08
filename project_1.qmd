@@ -9,6 +9,16 @@ format:
 editor: visual
 ---
 
+```{r}
+library(readxl)
+library(tidyverse)
+library(rafalib)
+library(plotly)
+library(dplyr)
+
+pooled_data = read_excel("data.xlsx", "pooled123")
+```
+
 # Executive Summary
 
 # Explorary Data Analysis (EDA)
@@ -23,7 +33,77 @@ editor: visual
 
 ## Research Question
 
+**`RQ1 : Is there an association between anxiety before undergoing VR and side effect severity after VR exposure`**
+
 ## Analysis
+
+::: panel-tabset
+# Correlation
+
+```{r}
+cor(pooled_data$p_vra, pooled_data$ssq_full)
+```
+
+# Figure 1
+
+```{r}
+ggplot(pooled_data, aes(x = p_vra, y = ssq_full)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+# Summary Statistics
+
+```{r}
+model = lm(ssq_full ~ p_vra, data = pooled_data)
+
+summary(model)
+```
+
+# Figure 2
+
+```{r}
+ggplot(model, aes(x = .fitted, y = .resid)) + # Plotting fitted values and residuals
+  geom_point() + # Create scatterplot
+  geom_hline(yintercept = 0, linetype = "dashed", colour = "red")
+```
+:::
+
+The correlation between p_vra (VR anxiety) and ssq_full (Full Sum-Scored Active SSQ minus Full Sum-Scored Baseline SSQ) shows 0.3877125, indicating low positive correlation. Figure 1 supports linear relationship between two variables. Figure 2 reinforces the relationship by showing approximately random and same variances in vertical direction along the fitted axis (homoscedasticity). With the assumptions, performing regression test is approriate. The regression test in the summary statistics shows p value of 1.7e-13 and test statistic of 7.687. Assuming the significant level is 0.05, the null hypothesis (the slope is 0) can be rejected, suggesting the alternative hypothesis (the slope value is significantly different from 0).
+
+::: panel-tabset
+# Figure 3
+
+```{r}
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_6, x = ssq_full, fill = PSTAI_6)) +
+  labs(title = "Side Effect Severity in Each Level of Worried")
+```
+
+# Figure 4
+
+```{r}
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_4, x = ssq_full, fill = PSTAI_4)) +
+  labs(title = "Side Effect Severity in Each Level of Relaxed")
+```
+
+# Figure 5
+
+```{r}
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_1, x = ssq_full, fill = PSTAI_1)) +
+  labs(title = "Side Effect Severity in Each Level of Calm")
+```
+
+#  Figure 6
+
+```{r}
+ggplot(pooled_data) +
+  geom_boxplot(aes(y = PSTAI_2, x = ssq_full, fill = PSTAI_2)) +
+  labs(title = "Side Effect Severity in Each Level of Tension")
+```
+:::
 
 # Articles
 
