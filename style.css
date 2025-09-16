@@ -1,0 +1,11 @@
+.quarto-title-block .quarto-title-banner {
+  height: 200px !important; /* Adjust the pixel value as needed */
+}
+
+.title{
+  font-size: 3em;
+}
+
+.subtitle{
+  font-size: 1.8em;
+}
