@@ -18,13 +18,12 @@ library(tidyverse)
 library(rafalib)
 library(plotly)
 library(dplyr)
+library(reshape2)
 
 pooled_data = read_excel("data.xlsx", "pooled123")
 ```
 
 # Executive Summary
-
-This report investigates the association between pre-VR conditions and change in total symptom score before and after undergoing VR. This analysis specifically focuses on VR anxiety measured by p_vra, the expectancy score measured by p_e, and the change measured by ssq_full. The results suggest an association between these variables.
 
 # Explorary Data Analysis (EDA)
 
@@ -38,7 +37,7 @@ This report investigates the association between pre-VR conditions and change in
 
 ## Research Question
 
-**`RQ1 : Is there an association between anxiety before undergoing VR and change in total symptom score?`**
+**`RQ1 : Is there an association between anxiety before undergoing VR and side effect severity after VR exposure?`**
 
 ## Analysis
 
@@ -53,9 +52,11 @@ cor(pooled_data$p_vra, pooled_data$ssq_full)
 
 ```{r}
 figure_1 <- ggplot(pooled_data, aes(x = p_vra, y = ssq_full)) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE) +
-  labs(title = "ssq_full vs p_vra")
+    geom_point() +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+    labs(title = "Side Effect Severity vs VR Anxiety",
+         x = "VR Anxiety",
+         y = "Side Effect Severity")
 
 ggplotly(figure_1)
 ```
@@ -64,8 +65,8 @@ ggplotly(figure_1)
 
 ```{r}
 model = lm(ssq_full ~ p_vra, data = pooled_data)
-figure_2 <- ggplot(model, aes(x = .fitted, y = .resid)) + # Plotting fitted values and residuals
-  geom_point() + # Create scatterplot
+figure_2 <- ggplot(model, aes(x = .fitted, y = .resid)) + 
+  geom_point() + 
   geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +
   labs(title = "Residual Plot")
 
@@ -79,50 +80,64 @@ summary(model)
 ```
 :::
 
-The correlation between p_vra (VR anxiety) and ssq_full (Full Sum-Scored Active SSQ minus Full Sum-Scored Baseline SSQ) shows 0.3877125, indicating low positive correlation. Figure 1 supports linear relationship between two variables. Figure 2 reinforces the relationship by showing approximately random and same variances in vertical direction along the fitted axis (homoscedasticity).
+The correlation between VR anxiety and side effect severity shows $0.388$, indicating low positive correlation. Figure 1 supports linear relationship between two variables. Figure 2 reinforces the relationship by showing approximately random and same variances in vertical direction along the fitted axis (homoscedasticity). In conclusion, linear model between those two variables are appropriateclear
 
-With these assumptions, performing regression test is approriate. The regression test in the summary statistics shows p value of 1.7e-13 and test statistic of 7.687. Assuming the significant level is 0.05, the null hypothesis (the slope is 0) can be rejected, suggesting the alternative hypothesis (the slope value is significantly different from 0). Thus, the alternative hypothesis suggests a positive linear relationship between VR anxiety and change in total symptom score.
+Given that the assumptions of the linear model are satisfied, performing a regression test is appropriate. The regression results in the summary statistics show a **p-value of** $1.7 \times 10^{-13}$. Assuming a significance level of $0.05$, we reject the null hypothesis ($H_0: \text{slope} = 0$), indicating that the alternative hypothesis ($H_1: \text{slope} \neq 0$) is supported. This suggests a significant linear relationship between VR anxiety and side effect severity. The relationship is described by the following regression equation:
+
+$$Side Effect Severity = 2.5968 * (VR Anxiety) + 3.7997$$
 
 ```{r}
-PSTAI_vars <- c("PSTAI_1", "PSTAI_2", "PSTAI_4", "PSTAI_6")
+pooled_binary <- pooled_data %>%
+  mutate(
+    PSTAI_1_bin = case_when(
+      PSTAI_1 %in% c("Very Much", "Moderately", "Somewhat") ~ 1,
+      PSTAI_1 == "Not at all" ~ 0,
+      TRUE ~ NA_real_
+    ),
+    PSTAI_2_bin = case_when(
+      PSTAI_2 %in% c("Very Much", "Moderately", "Somewhat") ~ 1,
+      PSTAI_2 == "Not at all" ~ 0,
+      TRUE ~ NA_real_
+    ),
+    PSTAI_4_bin = case_when(
+      PSTAI_4 %in% c("Very Much", "Moderately", "Somewhat") ~ 1,
+      PSTAI_4 == "Not at all" ~ 0,
+      TRUE ~ NA_real_
+    ),
+    PSTAI_6_bin = case_when(
+      PSTAI_6 %in% c("Very Much", "Moderately", "Somewhat") ~ 1,
+      PSTAI_6 == "Not at all" ~ 0,
+      TRUE ~ NA_real_
+    )
+  )
 
+pooled_melt <- melt(pooled_binary,
+                    id.vars = "ssq_full", 
+                    measure.vars = c("PSTAI_1_bin", "PSTAI_2_bin", "PSTAI_4_bin", "PSTAI_6_bin"),
+                    variable.name = "PSTAI_var",
+                    value.name = "Binary")
 
-median_summary <- lapply(PSTAI_vars, function(var) {
-  pooled_data %>%
-    mutate(PSTAI_binary = case_when(
-      .data[[var]] %in% c("Very Much", "Moderately", "Somewhat") ~ "Positive",
-      .data[[var]] == "Not at all" ~ "Negative",
-      TRUE ~ NA_character_
-    )) %>%
-    group_by(PSTAI_binary) %>%
-    summarise(median_ssq = median(ssq_full, na.rm = TRUE)) %>%
-    mutate(Variable = var)
-}) %>%
-  bind_rows()
+pooled_melt <- pooled_melt %>%
+  mutate(Label = ifelse(PSTAI_var == "PSTAI_1_bin", "Calm",
+                 ifelse(PSTAI_var == "PSTAI_2_bin", "Tension",
+                 ifelse(PSTAI_var == "PSTAI_4_bin", "Relaxed",
+                 ifelse(PSTAI_var == "PSTAI_6_bin", "Worry", NA)))),
+         Label = factor(Label, levels = c("Calm", "Relaxed", "Tension", "Worry")),
+         Binary = factor(Binary, levels = c(0,1), labels = c("Negative","Positive")))
 
-median_summary <- median_summary %>%
-  mutate(Label = recode(Variable,
-                        "PSTAI_1" = "Calm",
-                        "PSTAI_4" = "Relaxed",
-                        "PSTAI_2" = "Tension",
-                        "PSTAI_6" = "Worry"))
-
-median_summary <- median_summary %>%
-  mutate(Label = factor(Label, levels = c("Calm", "Relaxed", "Tension", "Worry")))
-
-ggplot(median_summary, aes(x = Label, y = median_ssq, fill = PSTAI_binary)) +
-  geom_col(position = position_dodge(width = 0.7), width = 0.6) +
+ggplot(pooled_melt, aes(x = Label, y = ssq_full, fill = Binary)) +
+  geom_boxplot(position = position_dodge(width = 0.8), width = 0.6, outlier.shape = NA) +
   scale_fill_manual(values = c("Positive" = "#377eb8", "Negative" = "#e41a1c")) +
-  labs(title = "Median 'ssq_full' Scores by PSTAI Group",
+  labs(title = "Distribution of Side Effect Severity Scores by PSTAI Group",
        x = "PSTAI Variable",
-       y = "Median 'ssq_full' Score",
+       y = "Side Effect Severity",
        fill = "PSTAI Group") +
   theme_minimal()
 ```
 
-PSTAI data on the 4-point Likert scale were aggregated into two categories: "Positive" ("Very much", "Somewhat", "Moderately") and "Negative" ("Not at all"). A comparative bar chart showed that change in total symptom score aligned with anxiety, as indicated by higher reports of tension and worry and lower reports of relaxation and calmness, consistent with established markers of anxiety (American Psychiatric Association, 2022).
+PSTAI data on the 4-point Likert scale were aggregated into two categories: "Positive" ("Very much", "Somewhat", "Moderately") and "Negative" ("Not at all"). A comparative bar plot showed that side effect severity aligned with anxiety, as indicated by higher reports of tension and worry and lower reports of relaxation and calmness, consistent with established markers of anxiety (American Psychiatric Association, 2022).
 
-This is evidenced by the median scores of ssq_full, where the ssq_full revealed higher median “Negative” scores for Calm and Relaxed, and higher median “Positive” scores for Tension and Worry.
+This is evidenced by the median scores of the side effect severity, where it reveals higher median “Negative” scores for Calm and Relaxed, and higher median “Positive” scores for Tension and Worry.
 
 ```{r}
 median_expect <- median(pooled_data$expect, na.rm = TRUE)
@@ -132,9 +147,9 @@ pooled_data$expect_group <- ifelse(pooled_data$expect <= median_expect, "Low", "
 p <- ggplot(pooled_data, aes(x = expect_group, y = ssq_full, fill = expect_group)) +
   geom_boxplot() +
   labs(
-    title = "Symptom Score by Expectancy Group",
+    title = "Side Effect Severity by Expectancy Group",
     x = "Expectancy Group",
-    y = "Symptom Score (ssq_full)"
+    y = "Side Effect Severity"
   ) +
   theme(
     plot.title = element_text(hjust = 0.5)
@@ -144,9 +159,9 @@ interactive_plot <- ggplotly(p)
 interactive_plot
 ```
 
-When looking at the box plot above, the High expectancy group median generally shows higher ssq_full outcomes compared to the Low expectancy group median. Expectancy was divided by whether scores were above or below the overall median. One noticeable feature is an outlier in the Low group, which may explain why the difference between the two groups was less clear in the first analysis. The High group also has a wider IQR, pointing to greater variation in symptom severity among those with higher expectancy.
+When looking at the box plot above, the High expectancy group median generally shows higher severity outcomes compared to the Low expectancy group median. The High group also has a wider IQR, pointing to greater variation in symptom severity among those with higher expectancy. Expectancy was divided by whether scores were above or below the overall median. One noticeable feature is an outlier in the Low group, which may explain why the difference between the two groups was less clear in the first analysis.
 
-Taken together, these findings suggest that higher expectancy is linked to both stronger symptom reporting in VR and more variability across participants. These may suggest people who have high expectancy or negative expectancy have anxiety (Steinman et al. 2013), resulting in greater change in total symptom score.
+Taken together, these findings suggest that higher expectancy is associated with stronger VR symptom reporting and greater variability, possibly reflecting increased anxiety in those with high or negative expectancy (Steinman et al., 2013), leading to more severe side effects.
 
 # Articles
 
