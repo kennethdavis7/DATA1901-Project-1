@@ -200,7 +200,9 @@ p <- ggplot(pooled_data, aes(x = expect_group, y = ssq_full, fill = expect_group
     plot.title = element_text(hjust = 0.5)
   )
 
-interactive_plot <- ggplotly(p)
+interactive_plot <- ggplotly(p) %>%
+  layout(showlegend=FALSE) %>%
+  style(hoverinfo = "y")
 interactive_plot
 ```
 
@@ -272,6 +274,16 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 
 -   The logic of data transformation using melt was suggested during drop in session (Han, Wednesday Drop In Session Tutor , September 17, 2025).
 
+-   OpenAI. (2025, September 19). *Response to question about hiding legends and hover info in ggplotly boxplots* \[ChatGPT response\]. <https://openai.com/chatgpt>
+
+-   OpenAI. (2025, September 16). Response to request for concise methods in executive summary writing \[ChatGPT response\]. <https://openai.com/chatgpt>
+
+-   OpenAI. (2025, September 15). Response to request for code refinement and re-layout in figure *Side Effect Severity by Expectancy Group* \[ChatGPT response\]. <https://openai.com/chatgpt>
+
+-   OpenAI. (2025, September 18). Response to request for text refinement in section *Distribution of Side Effect Severity Scores by PSTAI Group* \[ChatGPT response\]. <https://openai.com/chatgpt>
+
+-   OpenAI. (2025, September 18). Response to request for methodology suggestion in data transformation \[ChatGPT response\]. <https://openai.com/chatgpt>
+
 ### Articles
 
 -   American Psychiatric Association. (2022). *Diagnostic and statistical manual of mental disorders* (5th ed., text rev.). Arlington, VA: American Psychiatric Publishing.
@@ -284,4 +296,10 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 
 ## AI Usage Statement
 
-No AI was used to inform the report or code.
+AI used to refine/suggest concise methods for Executive summary writing
+
+AI used to refine/re-layout code in figure "Side Effect Severity by Expectancy Group".
+
+AI used to refine within text for Distribution of Side Effect Severity Scores by PSTAI Group
+
+AI used to suggest methodology of data transformation
