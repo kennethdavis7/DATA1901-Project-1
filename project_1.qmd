@@ -25,6 +25,10 @@ pooled_data = read_excel("all_data.xlsx", "pooled123")
 
 # Executive Summary
 
+::: {style="text-align: justify;"}
+This report examines pre-VR conditions and side effect severity. Analyses include a scatter plot showing a positive relation between VR anxiety and severity, double box plots comparing state anxiety and severity, and a comparative box plot linking expectancy to severity. Findings suggest anxiety and expectancy positively relate to side effects.
+:::
+
 # Exploratory Data Analysis (EDA)
 
 ## Structures
@@ -223,19 +227,19 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 |                           |               |                         |
 |                           |               | -   Edward Danar Atmojo |
 |                           |               |                         |
-|                           |               | -   Rickey              |
+|                           |               | -   Rickey Arvidson     |
 |                           |               |                         |
-|                           |               | -   Leo                 |
+|                           |               | -   Leo Trimble         |
 |                           |               |                         |
-|                           |               | -   Cici Luo            |
+|                           |               | -   Yuexi Luo           |
 +---------------------------+---------------+-------------------------+
 | Friday, 19 September 2025 | 18:00 - 19:00 | -   Kenneth Davis       |
 |                           |               |                         |
-|                           |               | -   Rickey              |
+|                           |               | -   Rickey Arvidson     |
 |                           |               |                         |
-|                           |               | -   Leo                 |
+|                           |               | -   Leo Trimble         |
 |                           |               |                         |
-|                           |               | -   Cici Luo            |
+|                           |               | -   Yuexi Luo           |
 +---------------------------+---------------+-------------------------+
 
 ## Contributions
