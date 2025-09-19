@@ -26,7 +26,7 @@ pooled_data = read_excel("all_data.xlsx", "pooled123")
 # Executive Summary
 
 ::: {style="text-align: justify;"}
-This report examines pre-VR conditions and side effect severity. Analyses include a scatter plot showing a positive relation between VR anxiety and severity, double box plots comparing state anxiety and severity, and a comparative box plot linking expectancy to severity. Findings suggest anxiety and expectancy positively relate to side effects.
+This report examines pre-VR conditions and side effect severity after VR exposure. Analyses include a scatter plot showing a positive relation between VR anxiety and severity, double box plot comparing state anxiety with severity, and a comparative box plot linking expectancy to severity. Findings suggest anxiety positively affects side effects.
 :::
 
 # Exploratory Data Analysis (EDA)
@@ -63,7 +63,7 @@ The study was single-blind, which may have caused observer bias. It was conducte
 ## Assumptions
 
 ::: {style="text-align: justify;"}
-We assumed the variables (PSTAI, p_e, and p_vra) accurately measure anxiety and that participants understood and completed the survey correctly.
+We assumed the variables (PSTAI, p_e, and p_vra) accurately measure anxiety and that participants understood and completed the surveys correctly.
 :::
 
 ## Data Cleaning & Transformation
@@ -138,7 +138,11 @@ figure_1 <- ggplot(pooled_data, aes(x = p_vra, y = ssq_full)) +
     geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
     labs(title = "Side Effect Severity vs VR Anxiety",
          x = "VR Anxiety",
-         y = "Side Effect Severity")
+         y = "Side Effect Severity") +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
 
 ggplotly(figure_1)
 ```
@@ -150,7 +154,10 @@ model = lm(ssq_full ~ p_vra, data = pooled_data)
 figure_2 <- ggplot(model, aes(x = .fitted, y = .resid)) + 
   geom_point() + 
   geom_hline(yintercept = 0, linetype = "dashed", colour = "red") +
-  labs(title = "Residual Plot")
+  labs(title = "Residual Plot") +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
 
 ggplotly(figure_2)
 ```
@@ -163,7 +170,7 @@ summary(model)
 :::
 
 ::: {style="text-align: justify;"}
-The correlation between VR anxiety and side effect severity shows $0.388$, indicating a low positive correlation. Figure 1 supports a linear relationship between two variables. Figure 2 reinforces the relationship by showing approximately random and the same variances in the vertical direction along the fitted axis (homoscedasticity). In conclusion, a linear model between those two variables is appropriate.
+The correlation between VR anxiety and side effect severity shows $0.388$, indicating a moderate positive correlation. Figure 1 supports a linear relationship between two variables. Figure 2 reinforces the relationship by showing approximately random and the same variances (homoscedasticity) in the vertical direction along the fitted axis (Although the spread of residuals looks uneven). In conclusion, a linear model between these two variables is appropriate.
 
 Given that the assumptions of the linear model are satisfied, performing a regression test is appropriate. The regression results in the summary statistics show a **p-value of** $1.7 \times 10^{-13}$. Assuming a significance level of $0.05$, we reject the null hypothesis ($H_0: \text{slope} = 0$), indicating that the alternative hypothesis ($H_1: \text{slope} \neq 0$) is supported. This suggests a significant linear relationship between VR anxiety and side effect severity. The relationship is described by the following regression equation:
 
@@ -178,11 +185,15 @@ ggplot(pooled_melt, aes(x = Label, y = ssq_full, fill = Binary)) +
        x = "PSTAI Variable",
        y = "Side Effect Severity",
        fill = "PSTAI Group") +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
 ```
 
 ::: {style="text-align: justify;"}
-The above comparative bar plot showed that side effect severity aligned with anxiety, as indicated by higher reports of tension and worry and lower reports of relaxation and calmness, consistent with established markers of anxiety (American Psychiatric Association, 2022).
+The above comparative double box plot shows that side effect severity aligned with anxiety, as indicated by higher reports of tension and worry and lower reports of relaxation and calmness, consistent with established markers of anxiety (American Psychiatric Association, 2022).
 
 This is evidenced by the median scores of the side effect severity, where it reveals higher median “Negative” scores for Calm and Relaxed, and higher median “Positive” scores for Tension and Worry.
 :::
@@ -235,7 +246,7 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 |                           |               |                         |
 |                           |               | -   Yuexi Luo           |
 +---------------------------+---------------+-------------------------+
-| Friday, 19 September 2025 | 18:00 - 19:00 | -   Kenneth Davis       |
+| Friday, 19 September 2025 | 18:00 - 20:30 | -   Kenneth Davis       |
 |                           |               |                         |
 |                           |               | -   Rickey Arvidson     |
 |                           |               |                         |
@@ -248,7 +259,7 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 
 | Group Member | Contribution |
 |----|----|
-| Kenneth Davis | Analysis (VR Anxiety and Side Effect Severity Relationship) |
+| Kenneth Davis | Analysis (VR Anxiety and Side Effect Severity Relationship) and Format Beautification |
 | Edward Danar Atmojo | Analysis (PSTAI and Side Effect Severity Relationship) |
 | Rickey Arvidson | Analysis (Expectancy Score and Side Effect Severity Relationship) |
 | Leo Trimble | Executive Summary |
@@ -258,9 +269,9 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 
 ### Resources
 
--   *Code Chunks*. (n.d.). Rmarkdown.rstudio.com. https://rmarkdown.rstudio.com/lesson-3.html
+-   *Code Chunks*. (n.d.). Rmarkdown.rstudio.com. <https://rmarkdown.rstudio.com/lesson-3.html>
 
--   *Title Blocks – Quarto*. (2018). Quarto. https://quarto.org/docs/authoring/title-blocks.html
+-   *Title Blocks – Quarto*. (2018). Quarto. <https://quarto.org/docs/authoring/title-blocks.html>
 
 -   Wickham, H. (2016b). Dodge overlapping objects side-to-side - position_dodge. - position_dodge • ggplot2. <https://ggplot2.tidyverse.org/reference/position_dodge.html>
 
@@ -270,36 +281,40 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 
 -   Wickham, Hadley, Chang, W., Henry, L., Pedersen, T. L., Takahashi, K., Wilke, C., Woo, K., Yutani, H., Dunnington, D., & van den Brand, T. (2025). A box and whiskers plot (in the style of Tukey) - geom_boxplot. - geom_boxplot • ggplot2. <https://ggplot2.tidyverse.org/reference/geom_boxplot.html>
 
--   *Quarto - HTML Basics*. (n.d.). Quarto.org. https://quarto.org/docs/output-formats/html-basics.html
+-   *Quarto - HTML Basics*. (n.d.). Quarto.org. <https://quarto.org/docs/output-formats/html-basics.html>
 
 -   The logic of data transformation using melt was suggested during drop in session (Han, Wednesday Drop In Session Tutor , September 17, 2025).
 
--   OpenAI. (2025, September 19). *Response to question about hiding legends and hover info in ggplotly boxplots* \[ChatGPT response\]. <https://openai.com/chatgpt>
+-   OpenAI. (2025, September 19). *Response to question about hiding legends and hover info in ggplotly boxplots* \[ChatGPT response, GPT-5 mini\]. <https://openai.com/chatgpt>
 
--   OpenAI. (2025, September 16). Response to request for concise methods in executive summary writing \[ChatGPT response\]. <https://openai.com/chatgpt>
+-   OpenAI. (2025, September 16). Response to request for concise methods in executive summary writing \[ChatGPT response, GPT-5 mini\]. <https://openai.com/chatgpt>
 
--   OpenAI. (2025, September 15). Response to request for code refinement and re-layout in figure *Side Effect Severity by Expectancy Group* \[ChatGPT response\]. <https://openai.com/chatgpt>
+-   OpenAI. (2025, September 15). Response to request for code refinement and re-layout in figure *Side Effect Severity by Expectancy Group* \[ChatGPT response, GPT-5 mini\]. <https://openai.com/chatgpt>
 
--   OpenAI. (2025, September 18). Response to request for text refinement in section *Distribution of Side Effect Severity Scores by PSTAI Group* \[ChatGPT response\]. <https://openai.com/chatgpt>
+-   OpenAI. (2025, September 18). Response to request for text refinement in section *Distribution of Side Effect Severity Scores by PSTAI Group* \[ChatGPT response, GPT-5 mini\]. <https://openai.com/chatgpt>
 
--   OpenAI. (2025, September 18). Response to request for methodology suggestion in data transformation \[ChatGPT response\]. <https://openai.com/chatgpt>
+-   OpenAI. (2025, September 18). Response to request for methodology suggestion in data transformation \[ChatGPT response, GPT-5 mini\]. <https://openai.com/chatgpt>
+
+-   *Center Plot title in ggplot2*. (n.d.). Stack Overflow. <https://stackoverflow.com/questions/40675778/center-plot-title-in-ggplot2>
 
 ### Articles
 
 -   American Psychiatric Association. (2022). *Diagnostic and statistical manual of mental disorders* (5th ed., text rev.). Arlington, VA: American Psychiatric Publishing.
 
--   Steinman, S. A., Smyth, F. L., Bucks, R. S., MacLeod, C., & Teachman, B. A. (2013). Anxiety-linked expectancy bias across the adult lifespan. *Cognition & Emotion*, *27*(2), 345–355. https://doi.org/10.1080/02699931.2012.711743
+-   Steinman, S. A., Smyth, F. L., Bucks, R. S., MacLeod, C., & Teachman, B. A. (2013). Anxiety-linked expectancy bias across the adult lifespan. *Cognition & Emotion*, *27*(2), 345–355. <https://doi.org/10.1080/02699931.2012.711743>
 
--   Centers for Disease Control and Prevention. (2024, June 25). *Symptoms of COVID-19*. COVID-19; CDC. https://www.cdc.gov/covid/signs-symptoms/index.html
+-   Centers for Disease Control and Prevention. (2024, June 25). *Symptoms of COVID-19*. COVID-19; CDC. [https://www.cdc.gov/covid/signs-symptoms/index.html](https://www.cdc.gov/covid/signs-symptoms/index.html))
 
 -   Saunders, C., Colagiuri, B., & Barnes, K. (2023). Socially acquired nocebo effects generalize but are not attenuated by choice. Annals of Behavioral Medicine, 57(12), 1069–1080.<https://doi.org/10.1093/abm/kaad056>[↩︎](https://inst-fs-syd-prod.inscloudgate.net/files/943a97ad-95b9-4daf-a793-c507a9621463/DATA1901_Exemplar1_HD.html?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3NTgyNDg3NDAsInVzZXJfaWQiOiIzMTU2MDAwMDAwMDQzOTE1NiIsInJlc291cmNlIjoiL2ZpbGVzLzk0M2E5N2FkLTk1YjktNGRhZi1hNzkzLWM1MDdhOTYyMTQ2My9EQVRBMTkwMV9FeGVtcGxhcjFfSEQuaHRtbCIsImp0aSI6IjY3YzljNTUyLTZkYmMtNGQ2NC1hOTRiLWZiMzgwOGRhY2E0ZSIsImhvc3QiOiJjYW52YXMuc3lkbmV5LmVkdS5hdSIsImZhbGxiYWNrX3VybCI6Imh0dHBzOi8vY2FudmFzLnN5ZG5leS5lZHUuYXUvY291cnNlcy82ODI2OC9maWxlcy80NDk2NDM4NS9wcmV2aWV3P2ZhbGxiYWNrX3RzPTE3NTgyNTExNTkiLCJleHAiOjE3NTgzMzUxNDB9.rrTa5lW-hOhVU0uV6g_8OTgBGWB_skhjPUIx_N6pTrN7QEfHTVT9WrQ7uDfs2Yls1jCAGEA9r6TAJlAleA_LGg#fnref1)
 
 ## AI Usage Statement
 
-AI used to refine/suggest concise methods for Executive summary writing
+AI used to refine/suggest concise methods for "Executive Summary" writing.
 
 AI used to refine/re-layout code in figure "Side Effect Severity by Expectancy Group".
 
-AI used to refine within text for Distribution of Side Effect Severity Scores by PSTAI Group
+AI used to refine within text for "Distribution of Side Effect Severity Scores by PSTAI Group".
 
-AI used to suggest methodology of data transformation
+AI used to suggest methodology of data transformation.
+
+AI used to find a way to hide legends and hover info for figure "Side Effect Severity by Expectancy Group".
