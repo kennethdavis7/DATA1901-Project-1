@@ -248,9 +248,9 @@ We adhere to the shared professional values of "Truthfulness and Integrity" in o
 |----|----|
 | Kenneth Davis | Analysis (VR Anxiety and Side Effect Severity Relationship) |
 | Edward Danar Atmojo | Analysis (PSTAI and Side Effect Severity Relationship) |
-| Rickey | Analysis (Expectancy Score and Side Effect Severity Relationship) |
-| Leo | Executive Summary |
-| Cici Luo | Exploratory Data Analysis |
+| Rickey Arvidson | Analysis (Expectancy Score and Side Effect Severity Relationship) |
+| Leo Trimble | Executive Summary |
+| Yuexi Luo | Exploratory Data Analysis |
 
 ## References
 
